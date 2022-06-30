@@ -22,4 +22,4 @@ jobs:
       - name: Apply to Vaults
         run: |
           for file in $(ls tnt*yaml)
-            vgs apply routes --vault ${file/.yaml/} -f ${file}
+            echo vgs apply routes --vault ${file/.yaml/} -f ${file}
