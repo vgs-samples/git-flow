@@ -8,6 +8,7 @@ jobs:
   apply-changes:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
@@ -21,3 +22,6 @@ jobs:
           do
             vgs apply routes --vault ${file/.yaml/} -f ${file};
           done
+        env: # Or as an environment variable
+          VGS_CLIENT_ID: ${{ secrets.VGS_CLIENT_ID }}
+          VGS_CLIENT_SECRET: ${{ secrets.VGS_CLIENT_SECRET }}
