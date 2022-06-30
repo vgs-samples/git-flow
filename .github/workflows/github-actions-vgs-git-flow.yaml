@@ -21,5 +21,7 @@ jobs:
           pip3 install vgs-cli
       - name: Apply to Vaults
         run: |
-          for file in $(ls tnt*yaml)
-            echo vgs apply routes --vault ${file/.yaml/} -f ${file}
+          for file in $(ls tnt*yaml);
+          do
+            echo vgs apply routes --vault ${file/.yaml/} -f ${file};
+          done
