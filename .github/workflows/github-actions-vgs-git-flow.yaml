@@ -20,8 +20,8 @@ jobs:
         run: |
           for file in $(ls tnt*yaml);
           do
-            vgs apply routes --vault ${file/.yaml/} -f ${file};
+            vgs --debug apply routes --vault ${file/.yaml/} -f ${file};
           done
-        env: # Or as an environment variable
+        env:
           VGS_CLIENT_ID: ${{ secrets.VGS_CLIENT_ID }}
           VGS_CLIENT_SECRET: ${{ secrets.VGS_CLIENT_SECRET }}
