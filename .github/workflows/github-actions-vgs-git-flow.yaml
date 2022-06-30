@@ -1,4 +1,4 @@
-name: Create production promotion pull request
+name: Apply to vault
 on:
   push:
     branches:
