@@ -3,11 +3,7 @@ on:
   push:
     branches:
       - master
-
-env:
-  VGS_CLIENT_ID: ACuYSXf8U-vgs-cli-ns4Yp
-  VGS_CLIENT_SECRET: 3be2454a-b3c8-40e5-9a56-c940597ef49d
-
+      
 jobs:
   apply-changes:
     runs-on: ubuntu-latest
@@ -23,5 +19,5 @@ jobs:
         run: |
           for file in $(ls tnt*yaml);
           do
-            echo vgs apply routes --vault ${file/.yaml/} -f ${file};
+            vgs apply routes --vault ${file/.yaml/} -f ${file};
           done
