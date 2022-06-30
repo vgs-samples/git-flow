@@ -1,0 +1,25 @@
+name: Create production promotion pull request
+on:
+  push:
+    branches:
+      - master
+
+env:
+  VGS_CLIENT_ID: ACuYSXf8U-vgs-cli-ns4Yp
+  VGS_CLIENT_SECRET: 3be2454a-b3c8-40e5-9a56-c940597ef49d
+
+jobs:
+  apply-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install VGS CLI
+        run: |
+          pip3 install vgs-cli
+      - name: Apply to Vaults
+        run: |
+          for file in $(ls tnt*yaml)
+            vgs apply routes --vault ${file/.yaml/} -f ${file}

@@ -1,0 +1,51 @@
+data:
+- attributes:
+    destination_override_endpoint: https://echo.apps.verygood.systems
+    entries:
+    - classifiers: {}
+      config:
+        condition: AND
+        expression: null
+        rules:
+        - condition: null
+          expression:
+            field: PathInfo
+            operator: equals
+            type: string
+            values:
+            - /post
+          rules: null
+        - condition: null
+          expression:
+            field: ContentType
+            operator: equals
+            type: string
+            values:
+            - application/json
+          rules: null
+      id: a6300e8b-c3f8-4bed-9703-95ef4a1be9d2
+      id_selector: null
+      operation: REDACT
+      operations: null
+      phase: REQUEST
+      public_token_generator: UUID
+      targets:
+      - body
+      token_manager: PERSISTENT
+      transformer: JSON_PATH
+      transformer_config:
+      - $.account_number
+      transformer_config_map: null
+    host_endpoint: (.*)\.verygoodproxy\.com
+    id: 247f9464-2fdf-46b4-b05c-b7ae1141936e
+    ordinal: null
+    port: 0
+    protocol: http
+    source_endpoint: '*'
+    tags:
+      name: my-inbound-route
+    updated_at: '2020-02-04T19:32:21'
+  id: 247f9464-2fdf-46b4-b05c-b7ae1141936e
+  type: rule_chain
+version: 1
+
