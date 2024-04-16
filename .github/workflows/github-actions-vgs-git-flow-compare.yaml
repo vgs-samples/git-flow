@@ -15,7 +15,7 @@ jobs:
           python-version: '3.x'
       - name: Install VGS CLI
         run: |
-          pip3 install vgs-cli
+          pip3 install vgs-cli         
       - name: Diff Vault config
         run: |
           for file in $(ls tnt*yaml);
