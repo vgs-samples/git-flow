@@ -15,16 +15,7 @@ jobs:
           python-version: '3.x'
       - name: Install VGS CLI
         run: |
-          pip3 install vgs-cli
-      - name: Create service_account.yaml file
-        run: |
-          echo "clientId: $VGS_CLIENT_ID" > service_account.yaml
-          echo "clientSecret: $VGS_CLIENT_SECRET" >> service_account.yaml
-        env:
-          VGS_CLIENT_ID: ${{ secrets.VGS_CLIENT_ID }}
-          VGS_CLIENT_SECRET: ${{ secrets.VGS_CLIENT_SECRET }}
-      - name: Apply VGS Service Account
-        run: vgs apply service-account -O AC9txVUzP6dHb6NrNGKXX3Kp -f service_account.yaml          
+          pip3 install vgs-cli         
       - name: Diff Vault config
         run: |
           for file in $(ls tnt*yaml);
@@ -32,6 +23,6 @@ jobs:
             vgs get routes --vault ${file/.yaml/} > ${file}.applied;
             diff -u ${file}.applied ${file} || echo "found a diff"
           done
-        # env:
-        #   VGS_CLIENT_ID: ${{ secrets.VGS_CLIENT_ID }}
-        #   VGS_CLIENT_SECRET: ${{ secrets.VGS_CLIENT_SECRET }}
+        env:
+          VGS_CLIENT_ID: ${{ secrets.VGS_CLIENT_ID }}
+          VGS_CLIENT_SECRET: ${{ secrets.VGS_CLIENT_SECRET }}
