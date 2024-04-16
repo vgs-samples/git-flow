@@ -24,7 +24,7 @@ jobs:
           VGS_CLIENT_ID: ${{ secrets.VGS_CLIENT_ID }}
           VGS_CLIENT_SECRET: ${{ secrets.VGS_CLIENT_SECRET }}
       - name: Apply VGS Service Account
-        run: vgs apply service-account -O AC4NjboQbJ2RurwUbEZZTezW -f service_account.yaml          
+        run: vgs apply service-account -O AC9txVUzP6dHb6NrNGKXX3Kp -f service_account.yaml          
       - name: Diff Vault config
         run: |
           for file in $(ls tnt*yaml);
