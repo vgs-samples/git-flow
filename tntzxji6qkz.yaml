@@ -1,0 +1,389 @@
+data:
+  - attributes:
+      created_at: '2024-01-04T18:52:58'
+      destination_override_endpoint: 'https://echo.secure.verygood.systems'
+      entries:
+        - classifiers: {}
+          config:
+            condition: AND
+            expression: null
+            rules:
+              - condition: null
+                expression:
+                  field: PathInfo
+                  operator: matches
+                  type: string
+                  values:
+                    - /redact
+                rules: null
+              - condition: null
+                expression:
+                  field: Method
+                  operator: equals
+                  type: string
+                  values:
+                    - POST
+                rules: null
+          id: 9923f8cb-94fe-47af-8259-609c84fef0a7
+          id_selector: null
+          operation: REDACT
+          operations:
+            - name: github.com/verygoodsecurity/common/compute/larky/http/Process
+              parameters:
+                script: >-
+                  # load("@stdlib//re", "re")
+
+                  # load("@stdlib//builtins", "builtins")
+
+                  # load("@vgs//vault", "vault")
+
+
+                  # def right_pad(input_string, width):
+
+                  #     padding = max(0, width - len(input_string))
+
+                  #     return input_string + ' ' * padding
+
+
+                  # def hash_value(match):
+
+                  #     value = match.group(0)
+
+
+                  #     return '\"hashedhere\"'
+
+
+                  # def process(input, ctx):    
+
+                  #     data = input.body.decode('utf-8')
+
+
+                  #     if data.isspace():
+
+                  #         input.body = 'Input is blank'
+
+                  #         return input
+
+
+                  #     input_string = "Replace sensitive value 'secret123' with
+                  a hash."
+
+
+                  #     regex_pattern = r"'(.*?)'"
+
+
+                  #     token = re.sub(regex_pattern, hash_value, input_string)
+
+
+                  #     # token = vault.redact(data,
+                  format="ALPHANUMERIC_LENGTH_PRESERVING_ONE_T_TWO")
+
+                  #     # input.body = right_pad(token, 13)
+
+                  #     input.body = token
+
+
+                  #     return input
+
+                  load("@vgs//vault", "vault")
+
+                  load("@stdlib//re", "re")
+
+                  load("@vendor//luhn", "luhn")
+
+                  load("@stdlib//builtins", "builtins")
+
+
+                  def redact_value(match):
+
+                      #     tokenDecorator:
+                      #       nonLuhnPattern: '[0-9]{6}(?<tokenized>[0-9]{6})[0-9]{4}'
+                      #       patternsList:
+                      #         - replacePattern: '991448${token}${lastFour}'
+                      #           searchPattern: '(?<token>[0-9]{6})(?<lastFour>[0-9]{4})'
+
+                      value = match.group(0)
+                      return '"' + vault.redact(value, format='NON_LUHN_FPE_ALPHANUMERIC', decorator_config={
+                          "searchPattern": r'(?<token>[0-9]{6})(?<lastFour>[0-9]{4})',
+                          "replacePattern": r'991448${token}${lastFour}'
+                      }) + '"'
+
+                  def process(input, ctx):
+
+                      f = "7T4485180063009191000000000000{000000000000{000000000000{4485180063009191{00{VB000000000000000000{RECONSTRUCTION EXPERTS\n7T4485180063009191000000000000{000000000000{4485180063009191{000000000000{00{4485180063009191{RECONSTRUCTION EXPERTS"
+                      pattern = r'448518\d{10}'
+
+                      lines = f.split('\n')
+                      redacted_lines = []
+                      for l in lines:
+                          redacted_line = re.sub(pattern, redact_value, l)
+                          redacted_lines.append(redacted_line)
+
+                      input.body = "\n".join(redacted_lines)
+
+                      return input
+          phase: REQUEST
+          public_token_generator: UUID
+          targets:
+            - body
+          token_manager: PERSISTENT
+          transformer: JSON_PATH
+          transformer_config:
+            - $.account_number
+          transformer_config_map: null
+      host_endpoint: (.*)\.verygoodproxy\.com
+      id: f2ae16f5-f36c-448a-8d7b-15275dd72212
+      ordinal: null
+      port: 80
+      protocol: http
+      source_endpoint: '*'
+      tags:
+        name: larky-testing-redact
+        source: RouteContainer
+      updated_at: '2024-04-03T05:49:06'
+    id: f2ae16f5-f36c-448a-8d7b-15275dd72212
+    type: rule_chain
+  - attributes:
+      created_at: '2024-01-06T23:25:02'
+      destination_override_endpoint: '*'
+      entries:
+        - classifiers: {}
+          config:
+            condition: AND
+            expression: null
+            rules:
+              - condition: null
+                expression:
+                  field: PathInfo
+                  operator: matches
+                  type: string
+                  values:
+                    - /post
+                rules: null
+              - condition: null
+                expression:
+                  field: Method
+                  operator: equals
+                  type: string
+                  values:
+                    - GET
+                rules: null
+          id: 48fef927-84dc-4872-9b4e-325ad32be4d4
+          id_selector: null
+          operation: ENRICH
+          operations: |-
+            [ {
+              "@type" : "type.googleapis.com/ProcessHttpBodyOperationConfig"
+            }, {
+              "@type" : "type.googleapis.com/RevealFileOperationConfig"
+            } ]
+          phase: REQUEST
+          public_token_generator: UUID
+          targets:
+            - body
+          token_manager: PERSISTENT
+          transformer: JSON_PATH
+          transformer_config:
+            - $.image
+          transformer_config_map: null
+      host_endpoint: echo\.apps\.verygood\.systems
+      id: 7b64cb05-b07e-4ec5-953b-e77d16223cc7
+      ordinal: null
+      port: 80
+      protocol: http
+      source_endpoint: '*'
+      tags:
+        name: reveal-file-get
+        source: RouteContainer
+      updated_at: '2024-02-02T01:07:32'
+    id: 7b64cb05-b07e-4ec5-953b-e77d16223cc7
+    type: rule_chain
+  - attributes:
+      created_at: '2024-01-06T23:31:46'
+      destination_override_endpoint: '*'
+      entries:
+        - classifiers: {}
+          config:
+            condition: AND
+            expression: null
+            rules:
+              - condition: null
+                expression:
+                  field: PathInfo
+                  operator: matches
+                  type: string
+                  values:
+                    - /post
+                rules: null
+              - condition: null
+                expression:
+                  field: Method
+                  operator: equals
+                  type: string
+                  values:
+                    - POST
+                rules: null
+          id: 0d20b58f-d16e-478a-bd3a-3afa86a40ac5
+          id_selector: null
+          operation: ENRICH
+          operations:
+            - name: github.com/verygoodsecurity/common/compute/larky/http/Process
+              parameters:
+                script: |-
+                  load("@vgs//vault", "vault")
+                  load("@stdlib//builtins", builtins="builtins")
+                  load("@stdlib//binascii", "binascii")
+                  load("@stdlib//json", json="json")
+                  load("@stdlib//codecs", codecs="codecs")
+                  load("@vendor//Crypto/Hash/HMAC", HMAC="HMAC")
+                  load("@vendor//Crypto/Hash/MD5", MD5="MD5")
+
+                  def bytes_to_string(by):
+                      return by.decode("utf-8")
+
+                  def string_to_bytes(s):
+                      return builtins.bytes(s, encoding="utf-8")
+
+                  def process(input, ctx):
+                      headers = input.headers
+                      body = json.loads(str(input.body))
+                      KEY = string_to_bytes(vault.reveal('tok_sandbox_bmNL9mL5BjNoxEbyMmQomF'))
+                      ID = headers['x-customer-id']
+                      card_number = vault.reveal(body['account'])
+                      body['account'] = card_number
+                      plainText = '|'.join([card_number, ID])
+                      # create hmac of body
+                      body_as_bytes = string_to_bytes(plainText)
+                      hash_value = HMAC.new(KEY, body_as_bytes, digestmod=MD5).digest()
+                      hmac_header = bytes_to_string(binascii.hexlify(hash_value))
+                      headers['x-hash'] = hmac_header                 
+                      input.headers = headers
+                      input.body = builtins.bytes(json.dumps(body))
+                      return input
+          phase: REQUEST
+          public_token_generator: UUID
+          targets:
+            - body
+          token_manager: PERSISTENT
+          transformer: JSON_PATH
+          transformer_config:
+            - $.account_number
+          transformer_config_map: null
+      host_endpoint: echo\.apps\.verygood\.systems
+      id: 8f14e364-a768-40e5-a202-ab751388eb6c
+      ordinal: null
+      port: 80
+      protocol: http
+      source_endpoint: '*'
+      tags:
+        name: larky-testing-reveal
+        source: RouteContainer
+      updated_at: '2024-02-02T01:07:34'
+    id: 8f14e364-a768-40e5-a202-ab751388eb6c
+    type: rule_chain
+  - attributes:
+      created_at: '2024-03-24T21:27:16'
+      destination_override_endpoint: 'https://echo.secure.verygood.systems'
+      entries:
+        - classifiers: {}
+          config:
+            condition: AND
+            expression: null
+            rules:
+              - condition: null
+                expression:
+                  field: PathInfo
+                  operator: matches
+                  type: string
+                  values:
+                    - /redact-file
+                rules: null
+              - condition: null
+                expression:
+                  field: Method
+                  operator: equals
+                  type: string
+                  values:
+                    - POST
+                rules: null
+          id: 98768805-7104-4162-87a6-69e41a02785f
+          id_selector: null
+          operation: REDACT
+          operations: |-
+            [ {
+              "@type" : "type.googleapis.com/ProcessHttpBodyOperationConfig"
+            }, {
+              "@type" : "type.googleapis.com/RedactFileOperationConfig"
+            } ]
+          phase: REQUEST
+          public_token_generator: UUID
+          targets:
+            - body
+          token_manager: PERSISTENT
+          transformer: JSON_PATH
+          transformer_config:
+            - $.image
+          transformer_config_map: null
+      host_endpoint: (.*)\.verygoodproxy\.com
+      id: 2f56d26a-bd56-496f-96e4-b7814484eee4
+      ordinal: null
+      port: 80
+      protocol: http
+      source_endpoint: '*'
+      tags:
+        name: redact-file
+        source: RouteContainer
+      updated_at: '2024-03-24T21:27:30'
+    id: 2f56d26a-bd56-496f-96e4-b7814484eee4
+    type: rule_chain
+  - attributes:
+      created_at: '2024-04-10T02:04:13'
+      destination_override_endpoint: 'https://echo.secure.verygood.systems'
+      entries:
+        - classifiers: {}
+          config:
+            condition: AND
+            expression: null
+            rules:
+              - condition: null
+                expression:
+                  field: PathInfo
+                  operator: matches
+                  type: string
+                  values:
+                    - /nt-enroll
+                rules: null
+              - condition: null
+                expression:
+                  field: ContentType
+                  operator: equals
+                  type: string
+                  values:
+                    - application/json
+                rules: null
+          id: 3f024c35-070b-42e7-b30c-2b91af8d517e
+          id_selector: null
+          operation: REDACT
+          operations: null
+          phase: REQUEST
+          public_token_generator: UUID
+          targets:
+            - body
+          token_manager: PERSISTENT
+          transformer: JSON_PATH
+          transformer_config:
+            - $.account_number
+          transformer_config_map: null
+      host_endpoint: (.*)\.verygoodproxy\.com
+      id: 3431525b-2217-4570-aeb7-b2b3202bac7c
+      ordinal: null
+      port: 80
+      protocol: http
+      source_endpoint: '*'
+      tags:
+        name: Equinox NT Enroll
+        source: RouteContainer
+      updated_at: '2024-04-10T02:04:13'
+    id: 3431525b-2217-4570-aeb7-b2b3202bac7c
+    type: rule_chain
+version: 1
