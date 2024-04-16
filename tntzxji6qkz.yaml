@@ -39,11 +39,8 @@ data:
 
 
                   # def right_pad(input_string, width):
-
                   #     padding = max(0, width - len(input_string))
-
                   #     return input_string + ' ' * padding
-
 
                   # def hash_value(match):
 
