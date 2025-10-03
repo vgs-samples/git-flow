@@ -107,7 +107,7 @@ data:
     protocol: http
     source_endpoint: '*'
     tags:
-      name: khaki-custard
+      name: khaki-custard-xxy
     updated_at: '2022-06-30T00:59:42'
   id: 8a8d8934-533f-4d8e-abf5-cff8f5809d7e
   type: rule_chain
